@@ -1,14 +1,21 @@
 (function() {
-    var root;
+	var root, asap;
 
-	if (typeof window === 'object' && window) {
+	if (atv) {
+		root = atv;
+		asap = function(fn) { atv.setTimeout(fn, 1); };
+	}
+	else if (typeof window === 'object' && window) {
 		root = window;
-	} else {
+	}
+	else {
 		root = global;
 	}
 
 	// Use polyfill for setImmediate for performance gains
-	var asap = Promise.immediateFn || root.setImmediate || function(fn) { setTimeout(fn, 1); };
+	if (!asap) {
+		asap = Promise.immediateFn || root.setImmediate || function(fn) { setTimeout(fn, 1); };
+	}
 
 	// Polyfill for Function.prototype.bind
 	function bind(fn, thisArg) {
